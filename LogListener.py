@@ -8,7 +8,6 @@ import logging
 import io
 
 def setup_logger(log_file):
-    """Configures the logger to write to a specified file."""
     logger = logging.getLogger("AlertMonitor")
     logger.setLevel(logging.INFO)
     handler = logging.FileHandler(log_file)
@@ -19,7 +18,6 @@ def setup_logger(log_file):
     return logger
 
 def send_email_alert(subject, body, recipient_email, logger):
-    """Sends an email alert using the system's 'sendmail' command."""
     try:
         sendmail_location = "/usr/sbin/sendmail"
         if not os.path.exists(sendmail_location):
@@ -33,7 +31,6 @@ def send_email_alert(subject, body, recipient_email, logger):
         logger.error(f"Failed to send email: {e}")
 
 def follow_file(log_file, keywords, recipient_email, logger, duration_minutes, no_email_flag):
-    """Opens a file and continuously yields new lines until duration is met."""
     start_time = time.time()
     duration_seconds = duration_minutes * 60 if duration_minutes > 0 else 0
 
@@ -41,17 +38,14 @@ def follow_file(log_file, keywords, recipient_email, logger, duration_minutes, n
     while True:
         line = log_file.readline()
         if not line:
-            time.sleep(1) # Wait for new content
+            time.sleep(1)
         else:
             line_lower = line.lower()
             for keyword in keywords:
                 if keyword in line_lower:
-                    # --- NEW LOGIC HERE ---
                     if no_email_flag:
-                        # If --no-email is used, just write the alert to the log file
                         logger.warning(f"Keyword '{keyword}' found in alert log: {line.strip()}")
                     else:
-                        # Otherwise, send the email as before
                         logger.info(f"Found keyword '{keyword}'! Sending alert...")
                         hostname = os.uname().nodename
                         subject = f"Oracle Alert on {hostname}: Found keyword '{keyword}'"
@@ -76,7 +70,6 @@ def main():
     global args
     args = parser.parse_args()
 
-    # Validate that an email is provided if email is not disabled
     if not args.no_email and not args.email:
         parser.error("--email is required unless --no-email is specified.")
 
