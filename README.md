@@ -10,10 +10,7 @@ That’s exactly what this script is for.
 
 It will continuously watch an Oracle alert log for specific keywords (like `ORA-`), save any matches to a log file, and optionally send email alerts.
 
----
 
-
-```bash
 nohup python3.6 tail_alert_log.py --logfile /path/to/alert.log --keywords "ORA-" --no-email --duration 60 &
 
 This runs the script in the background for 1 hour, logs matches to /tmp/oracle_alert_monitor.log, and does not send emails.
